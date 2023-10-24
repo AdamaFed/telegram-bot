@@ -12,8 +12,6 @@ import java.util.Map;
 
 public class Bot extends TelegramLongPollingBot {
 
-    private Quiz q;
-
     @Override
     public void onUpdateReceived(Update update) {
         long chatId = update.getMessage().getChatId();
@@ -29,7 +27,7 @@ public class Bot extends TelegramLongPollingBot {
             sendResponse(chatId, "2. Type any text, if you want me to count its letters");
         }
 
-
+    }
 
     private void sendResponse(long chatId, String s) {
         SendMessage msg = new SendMessage();
