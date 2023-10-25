@@ -5,9 +5,7 @@ import com.theokanning.openai.completion.chat.ChatMessage;
 import com.theokanning.openai.completion.chat.ChatMessageRole;
 import com.theokanning.openai.service.OpenAiService;
 import org.telegram.telegrambots.bots.TelegramLongPollingBot;
-import org.telegram.telegrambots.meta.api.methods.polls.SendPoll;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
-import org.telegram.telegrambots.meta.api.objects.Message;
 import org.telegram.telegrambots.meta.api.objects.Update;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 
@@ -19,12 +17,17 @@ public class Bot extends TelegramLongPollingBot {
         long chatId = update.getMessage().getChatId();
         String messageReceived = update.getMessage().getText();
         System.out.println(messageReceived);
-        String chatGptResponse = chatGptCall(messageReceived);
-        sendResponse(chatId, chatGptResponse);
+        try {
+            String chatGptResponse = chatGptCall(messageReceived);
+            sendResponse(chatId, chatGptResponse);
+        } catch (Exception e){
+            System.out.println(e.getMessage());
+        }
+
     }
 
     public String chatGptCall(String input) {
-        OpenAiService service = new OpenAiService("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");
+        OpenAiService service = new OpenAiService("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");
 
 
             List<ChatMessage> messages = new ArrayList<>();
