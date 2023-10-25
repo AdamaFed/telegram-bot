@@ -17,42 +17,40 @@ public class Bot extends TelegramLongPollingBot {
         long chatId = update.getMessage().getChatId();
         String messageReceived = update.getMessage().getText();
         System.out.println(messageReceived);
-
         try {
             String chatGptResponse = chatGptCall(messageReceived);
             sendResponse(chatId, chatGptResponse);
-        } catch (Exception e) {
+        } catch (Exception e){
             System.out.println(e.getMessage());
         }
+
     }
 
     public String chatGptCall(String input) {
-        OpenAiService service = new OpenAiService("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");
+        OpenAiService service = new OpenAiService("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");
 
 
-        List<ChatMessage> messages = new ArrayList<>();
-        ChatMessage systemMessage = new ChatMessage(ChatMessageRole.USER.value(), "");
-        messages.add(systemMessage);
+            List<ChatMessage> messages = new ArrayList<>();
+            ChatMessage systemMessage = new ChatMessage(ChatMessageRole.USER.value(), "");
+            messages.add(systemMessage);
 
 
-        ChatMessage firstMsg = new ChatMessage(ChatMessageRole.USER.value(), input);
-        if (input.equalsIgnoreCase("exit")) {
-            System.exit(0);
-        }
-        messages.add(firstMsg);
+            ChatMessage firstMsg = new ChatMessage(ChatMessageRole.USER.value(), input);
+            if (input.equalsIgnoreCase("exit")) {
+                System.exit(0);
+            }
+            messages.add(firstMsg);
 
-        ChatCompletionRequest chatCompletionRequest = ChatCompletionRequest
-                .builder()
-                .model("gpt-3.5-turbo-0613")
-                .messages(messages)
-                .n(1)
-                .maxTokens(100)
-                .logitBias(new HashMap<>())
-                .build();
+            ChatCompletionRequest chatCompletionRequest = ChatCompletionRequest
+                    .builder()
+                    .model("gpt-3.5-turbo-0613")
+                    .messages(messages)
+                    .maxTokens(100)
+                    .build();
 
-        ChatMessage responseMessage = service.createChatCompletion(chatCompletionRequest).getChoices().get(0).getMessage();
-        messages.add(responseMessage);
-        return (responseMessage.getContent());
+            ChatMessage responseMessage = service.createChatCompletion(chatCompletionRequest).getChoices().get(0).getMessage();
+            messages.add(responseMessage);
+            return responseMessage.getContent();
 
     }
 
@@ -63,12 +61,10 @@ public class Bot extends TelegramLongPollingBot {
 
         try {
             execute(msg);
-
         } catch (TelegramApiException e) {
             e.printStackTrace();
         }
     }
-
 
     @Override
     public String getBotToken() {
