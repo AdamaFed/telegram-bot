@@ -1,4 +1,9 @@
 
+
+import com.theokanning.openai.completion.chat.ChatCompletionRequest;
+import com.theokanning.openai.completion.chat.ChatMessage;
+import com.theokanning.openai.completion.chat.ChatMessageRole;
+import com.theokanning.openai.service.OpenAiService;
 import org.telegram.telegrambots.bots.TelegramLongPollingBot;
 import org.telegram.telegrambots.meta.api.methods.polls.SendPoll;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
@@ -6,26 +11,43 @@ import org.telegram.telegrambots.meta.api.objects.Message;
 import org.telegram.telegrambots.meta.api.objects.Update;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 public class Bot extends TelegramLongPollingBot {
-
-    @Override
     public void onUpdateReceived(Update update) {
+
         long chatId = update.getMessage().getChatId();
         String messageReceived = update.getMessage().getText();
         System.out.println(messageReceived);
+        String chatGptResponse = chatGptCall(messageReceived);
+        sendResponse(chatId, chatGptResponse);
+    }
 
-        // start to evaluate the messages you received
-        // 1. Main menu
-        if (messageReceived.toLowerCase().startsWith("hello")) {
-            sendResponse(chatId, "Welcome, human being 🤖");
-            sendResponse(chatId, "Let's have some fun now.... 😎");
-            sendResponse(chatId, "1. Type 'quiz', if you want me to ask you something smart");
-            sendResponse(chatId, "2. Type any text, if you want me to count its letters");
-        }
+    public String chatGptCall(String input) {
+        OpenAiService service = new OpenAiService("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");
+
+
+            List<ChatMessage> messages = new ArrayList<>();
+            ChatMessage systemMessage = new ChatMessage(ChatMessageRole.USER.value(), "");
+            messages.add(systemMessage);
+
+
+            ChatMessage firstMsg = new ChatMessage(ChatMessageRole.USER.value(), input);
+            if (input.equalsIgnoreCase("exit")) {
+                System.exit(0);
+            }
+            messages.add(firstMsg);
+
+            ChatCompletionRequest chatCompletionRequest = ChatCompletionRequest
+                    .builder()
+                    .model("gpt-3.5-turbo-0613")
+                    .messages(messages)
+                    .maxTokens(100)
+                    .build();
+
+            ChatMessage responseMessage = service.createChatCompletion(chatCompletionRequest).getChoices().get(0).getMessage();
+            messages.add(responseMessage);
+            return responseMessage.getContent();
 
     }
 
@@ -41,25 +63,14 @@ public class Bot extends TelegramLongPollingBot {
         }
     }
 
-    private void sendPollToUser(long chatId) {
-        SendPoll sendPoll = new SendPoll();
-        sendPoll.setChatId(chatId);
-        sendPoll.setQuestion("Which programming language do you like the most?");
-        sendPoll.setOptions(List.of("Java", "Python", "JavaScript", "C++"));
-        try {
-            execute(sendPoll);
-        } catch (TelegramApiException e) {
-            e.printStackTrace();
-        }
-    }
-
     @Override
     public String getBotToken() {
-        return "xxxxx";  // TODO: insert your bot token here!
+        return "6829303358:AAHZgpt7XnIbNkFBCjOdACntVqovNixbeKM";  // TODO: insert your bot token here!
     }
 
     @Override
     public String getBotUsername() {
-        return "xxxxx";  // TODO: insert your bots username here
+        return "AdventureGuide";  // TODO: insert your bots username here
     }
+
 }
