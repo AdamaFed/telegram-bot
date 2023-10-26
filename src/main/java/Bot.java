@@ -10,10 +10,9 @@ import java.util.*;
 
 public class Bot extends TelegramLongPollingBot {
 
-    LevelScenario level1 = new LevelScenario("Kolumbien", "Fischereiverbotszone", "Behörden", "fischen oder nicht fischen");
-    LevelScenario level2 = new LevelScenario("Kolumbien", "Fischereiverbotszone", "Behörden", "fischen oder nicht fischen");
-    LevelScenario level3 = new LevelScenario("Kolumbien", "Fischereiverbotszone", "Behörden", "fischen oder nicht fischen");
-
+    LevelScenario level1 = new LevelScenario("Regenwald", "Die Einheimischen sprechen von einem geheimnisvollen Ungeheuer", "Es soll in der Nacht kommen, hat große rote Augen und einen schreckliches gebrüll", "finde das ungeheuer oder gehe schnell zurück in dein Hotel");
+    LevelScenario level2 = new LevelScenario("Regenwald", "Man ist nun im Regenwald. Der Weg spaltet sich. Der eine Weg ist frei. Der andere hingegen versperrt durch ein großes Spinnennetz", "", "Nimm den einfachen Weg oder tritt durch das Spinnennetz und gehe diesen Weg");
+    LevelScenario level3 = new LevelScenario("Regenwald", "Der Ort wo das Ungeheuer sein soll ist erreicht. Es raschelt im Busch. Könnte es das Ungeheuer sein?", "Ist es das Ungeheuer welches von den Einheimischen beschrieben wurde?", "Laufe weg oder stelle dich dem Ungeheuer");
 
     private long currentLevel = 1;
     private int maxLevels = 3;
@@ -46,8 +45,10 @@ public class Bot extends TelegramLongPollingBot {
             } else if (messageReceived.toLowerCase().equals("/a") || messageReceived.toLowerCase().equals("/b")) {
                 boolean isCorrectAnswer = checkAnswer(chatId, messageReceived);
                 processAnswer(chatId, isCorrectAnswer);
-                sendResponse(chatId, getCurrentLevel().createStory());
-                setRandomCorrectAnswer(chatId);
+                if(isCorrectAnswer) {
+                    sendResponse(chatId, getCurrentLevel().createStory());
+                    setRandomCorrectAnswer(chatId);
+                }
             } else {
                 sendResponse(chatId, "Ungültige Eingabe. Bitte wähle 'a' oder 'b'.");
             }
