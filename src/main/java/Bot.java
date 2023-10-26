@@ -15,13 +15,14 @@ import java.util.*;
 public class Bot extends TelegramLongPollingBot {
 
     LevelScenario level1 = new LevelScenario("Kolumbien", "Fischereiverbotszone", "Behörden", "fischen oder nicht fischen");
+    LevelScenario level2 = new LevelScenario("Kolumbien", "Fischereiverbotszone", "Behörden", "fischen oder nicht fischen");
+    LevelScenario level3 = new LevelScenario("Kolumbien", "Fischereiverbotszone", "Behörden", "fischen oder nicht fischen");
 
 
     private Map<Long, String> userChoices = new HashMap<>();
 
 
     public void onUpdateReceived(Update update) {
-        int i = 0;
 
         long chatId = update.getMessage().getChatId();
         String messageReceived = update.getMessage().getText();
@@ -31,20 +32,42 @@ public class Bot extends TelegramLongPollingBot {
 
         if (messageReceived.equals("/start")) {
             sendAvatarSelectionMessage(chatId);
-            i++;
+
         } else if (messageReceived.equals("warrior") || messageReceived.equals("magician") || messageReceived.equals("shooter")) {
             userChoices.put(chatId, messageReceived);
             sendResponse(chatId, "You've selected the " + messageReceived + " avatar. Please wait for details.");
             sendAvatarInfo(chatId, messageReceived);
-            i++; //2
-        } else {
+        } else if (messageReceived.equals("magician") || messageReceived.equals("warrior") || messageReceived.equals("shooter")) {
             sendResponse(chatId, "Please start by selecting an avatar: warrior, magician, or shooter.");
         }
-
-        if (i > 0 && messageReceived.equals("level1")) {
-            sendResponse(chatId, "You've selected the " + messageReceived + " avatar. Please wait for details.");
-            i++;
+        if (messageReceived.equals("/level1")) {
+            sendResponse(chatId, level1.createStory(level1.toString()));
         }
+
+        if (messageReceived.toLowerCase().equals("/a")) {
+            sendResponse(chatId, "next scenario");
+
+        }
+
+        if (messageReceived.toLowerCase().equals("/b")){
+            sendResponse(chatId, "You lose");
+        }
+
+        if (messageReceived.equals("/level2")) {
+            sendResponse(chatId, level2.createStory(level2.toString()));
+        }
+
+        if (messageReceived.equals("/level3")) {
+            sendResponse(chatId, level3.createStory(level3.toString()));
+        }
+
+    }
+
+
+
+
+
+
 
        /* try {
             String chatGptResponse = ChatGptService.chatGptCall(messageReceived);
@@ -53,7 +76,6 @@ public class Bot extends TelegramLongPollingBot {
             System.out.println(e.getMessage());
         }*/
 
-    }
 
     private void sendAvatarSelectionMessage(long chatId) {
         SendMessage message = new SendMessage();
