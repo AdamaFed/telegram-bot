@@ -1,6 +1,5 @@
 public class LevelScenario {
 
-
     String fantasyWorld;
     String Conflict;
     String descriptionOfOtherCharacters;
@@ -48,8 +47,7 @@ public class LevelScenario {
     }
 
     public String createStory (String input){
-        Bot bot = new Bot();
-        return bot.chatGptCall("Erstelle aus den nachfolgenden Informationen ein Spielszenario mit maximal 100 Token. Es sollen die Optionen genutzt werden um eine Frage an den Leser zu stellen" + input);
+        return ChatGptService.chatGptCall("Erstelle aus den nachfolgenden Informationen ein Spielszenario mit maximal 100 Wörtern. Es sollen die Optionen genutzt werden um eine Frage an den Leser zu stellen" + input);
 
     }
 }
