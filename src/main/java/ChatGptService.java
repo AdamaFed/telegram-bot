@@ -11,7 +11,7 @@ import java.util.concurrent.ExecutionException;
 public class ChatGptService {
 
     public static String chatGptCall(String input) {
-        OpenAiService service = new OpenAiService("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", Duration.ofSeconds(60));
+        OpenAiService service = new OpenAiService("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", Duration.ofSeconds(60));
 
 
         List<ChatMessage> messages = new ArrayList<>();

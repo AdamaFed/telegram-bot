@@ -34,7 +34,7 @@ public class Bot extends TelegramLongPollingBot {
 
             if (messageReceived.equals("/start")) {
                 sendAvatarSelectionMessage(chatId);
-            } else if (messageReceived.equals("warrior") || messageReceived.equals("magician") || messageReceived.equals("shooter")) {
+            } else if (messageReceived.equals("scientist") || messageReceived.equals("forest ranger") || messageReceived.equals("adventurer")) {
                 userChoices.put(chatId, messageReceived);
                 sendResponse(chatId, "Du hast den " + messageReceived + " Avatar ausgewählt. Bitte warte auf weitere Details.");
                 sendAvatarInfo(chatId, messageReceived);
@@ -104,7 +104,7 @@ public class Bot extends TelegramLongPollingBot {
     private void sendAvatarSelectionMessage(long chatId) {
         SendMessage message = new SendMessage();
         message.setChatId(chatId);
-        message.setText("Choose an avatar: warrior, magician, or shooter");
+        message.setText("Choose an avatar: scientist, forest ranger, or adventurer");
         try {
             execute(message);
         } catch (TelegramApiException e) {
@@ -127,12 +127,12 @@ public class Bot extends TelegramLongPollingBot {
     private void sendAvatarInfo(long chatId, String choice) {
         Avatar avatar = null;
 
-        if (choice.equals("warrior")) {
-            avatar = new WarriorAvatar();
-        } else if (choice.equals("magician")) {
-            avatar = new MagicianAvatar();
-        } else if (choice.equals("shooter")) {
-            avatar = new ShooterAvatar();
+        if (choice.equals("scientist")) {
+            avatar = new ScientistAvatar();
+        } else if (choice.equals("forest ranger")) {
+            avatar = new AdventureAvatar();
+        } else if (choice.equals("adventurer")) {
+            avatar = new ForestRangerAvatar();
         }
 
         if (avatar != null) {
