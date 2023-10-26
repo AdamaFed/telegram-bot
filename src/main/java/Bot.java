@@ -129,9 +129,9 @@ public class Bot extends TelegramLongPollingBot {
 
         if (choice.equals("scientist")) {
             avatar = new ScientistAvatar();
-        } else if (choice.equals("forest ranger")) {
-            avatar = new AdventureAvatar();
         } else if (choice.equals("adventurer")) {
+            avatar = new AdventureAvatar();
+        } else if (choice.equals("forest ranger")) {
             avatar = new ForestRangerAvatar();
         }
 
