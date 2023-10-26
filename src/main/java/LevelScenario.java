@@ -46,8 +46,8 @@ public class LevelScenario {
                 '}';
     }
 
-    public String createStory (String input){
-        return ChatGptService.chatGptCall("Erstelle aus den nachfolgenden Informationen ein Spielszenario mit maximal 100 Wörtern. Es sollen die Optionen genutzt werden um eine Frage an den Leser zu stellen. Sie sollen als Stichpunkte genannt werden als Option a und Option b" + input);
+    public String createStory (){
+        return ChatGptService.chatGptCall("Erstelle aus den nachfolgenden Informationen ein Spielszenario mit maximal 100 Wörtern. Es sollen die Optionen genutzt werden um eine Frage an den Leser zu stellen. Sie sollen als Stichpunkte genannt werden als Option a und Option b" + toString());
 
     }
 }

@@ -10,7 +10,7 @@ import java.util.concurrent.ExecutionException;
 public class ChatGptService {
 
     public static String chatGptCall(String input) {
-        OpenAiService service = new OpenAiService("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");
+        OpenAiService service = new OpenAiService("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");
 
 
         List<ChatMessage> messages = new ArrayList<>();
@@ -42,3 +42,4 @@ public class ChatGptService {
 
 
 }
+

@@ -1,9 +1,5 @@
 
 
-import com.theokanning.openai.completion.chat.ChatCompletionRequest;
-import com.theokanning.openai.completion.chat.ChatMessage;
-import com.theokanning.openai.completion.chat.ChatMessageRole;
-import com.theokanning.openai.service.OpenAiService;
 import org.telegram.telegrambots.bots.TelegramLongPollingBot;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.Update;
@@ -19,6 +15,10 @@ public class Bot extends TelegramLongPollingBot {
     LevelScenario level3 = new LevelScenario("Kolumbien", "Fischereiverbotszone", "Behörden", "fischen oder nicht fischen");
 
 
+    private long currentLevel = 1;
+    private int maxLevels = 3;
+    private Random random = new Random();
+
     private Map<Long, String> userChoices = new HashMap<>();
 
 
@@ -28,44 +28,67 @@ public class Bot extends TelegramLongPollingBot {
         String messageReceived = update.getMessage().getText();
         System.out.println(messageReceived);
 
-        //Check if Avatar selected
+        if (currentLevel > maxLevels) {
+            sendResponse(chatId, "Spiel beendet. Du hast alle Level gespielt.");
+        } else {
+            System.out.println("Level " + currentLevel + ": " + messageReceived);
 
-        if (messageReceived.equals("/start")) {
-            sendAvatarSelectionMessage(chatId);
-
-        } else if (messageReceived.equals("warrior") || messageReceived.equals("magician") || messageReceived.equals("shooter")) {
-            userChoices.put(chatId, messageReceived);
-            sendResponse(chatId, "You've selected the " + messageReceived + " avatar. Please wait for details.");
-            sendAvatarInfo(chatId, messageReceived);
-        } else if (messageReceived.equals("magician") || messageReceived.equals("warrior") || messageReceived.equals("shooter")) {
-            sendResponse(chatId, "Please start by selecting an avatar: warrior, magician, or shooter.");
+            if (messageReceived.equals("/start")) {
+                sendAvatarSelectionMessage(chatId);
+            } else if (messageReceived.equals("warrior") || messageReceived.equals("magician") || messageReceived.equals("shooter")) {
+                userChoices.put(chatId, messageReceived);
+                sendResponse(chatId, "Du hast den " + messageReceived + " Avatar ausgewählt. Bitte warte auf weitere Details.");
+                sendAvatarInfo(chatId, messageReceived);
+                //Spiel
+            } else if (messageReceived.equals("/level" + currentLevel)) {
+                sendResponse(chatId, getCurrentLevel().createStory());
+                setRandomCorrectAnswer(chatId);
+            } else if (messageReceived.toLowerCase().equals("/a") || messageReceived.toLowerCase().equals("/b")) {
+                boolean isCorrectAnswer = checkAnswer(chatId, messageReceived);
+                processAnswer(chatId, isCorrectAnswer);
+                sendResponse(chatId, getCurrentLevel().createStory());
+                setRandomCorrectAnswer(chatId);
+            } else {
+                sendResponse(chatId, "Ungültige Eingabe. Bitte wähle 'a' oder 'b'.");
+            }
         }
-        if (messageReceived.equals("/level1")) {
-            sendResponse(chatId, level1.createStory(level1.toString()));
-        }
-
-        if (messageReceived.toLowerCase().equals("/a")) {
-            sendResponse(chatId, "next scenario");
-
-        }
-
-        if (messageReceived.toLowerCase().equals("/b")){
-            sendResponse(chatId, "You lose");
-        }
-
-        if (messageReceived.equals("/level2")) {
-            sendResponse(chatId, level2.createStory(level2.toString()));
-        }
-
-        if (messageReceived.equals("/level3")) {
-            sendResponse(chatId, level3.createStory(level3.toString()));
-        }
-
     }
 
+    private LevelScenario getCurrentLevel() {
+        if (currentLevel == 1) {
+            return level1;
+        } else if (currentLevel == 2) {
+            return level2;
+        } else if (currentLevel == 3) {
+            return level3;
+        }
+        return null;
+    }
 
+    private void setRandomCorrectAnswer(long chatId) {
+        if (currentLevel > 0) {
+            String correctAnswer = random.nextBoolean() ? "/a" : "/b";
+            userChoices.put(chatId, correctAnswer);
+        }
+    }
 
+    private void processAnswer(long chatId, boolean isCorrectAnswer) {
+        if (isCorrectAnswer) {
+            sendResponse(chatId, "Richtig! Nächste Level: Level " + (currentLevel + 1));
+            currentLevel++;
+        } else {
+            sendResponse(chatId, "Falsche Antwort. Du hast verloren.");
+        }
+    }
 
+    private boolean checkAnswer(long chatId, String answer) {
+        LevelScenario currentLevel = getCurrentLevel();
+        if (currentLevel != null) {
+            String correctAnswer = userChoices.get(chatId);
+            return correctAnswer != null && correctAnswer.equalsIgnoreCase(answer);
+        }
+        return false;
+    }
 
 
 
@@ -114,7 +137,7 @@ public class Bot extends TelegramLongPollingBot {
         if (avatar != null) {
             String info = avatar.getName() + "\n\n" + avatar.getDescription() + "\n\nAbilities: " + avatar.getAbilities();
             sendResponse(chatId, info);
-            sendResponse(chatId, level1.createStory(level1.toString()));
+            sendResponse(chatId, level1.createStory());
         } else {
             sendResponse(chatId, "Invalid avatar choice.");
         }
